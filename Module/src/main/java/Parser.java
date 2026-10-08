@@ -1,3 +1,5 @@
+//import java.util.Arrays;
+
 public class Parser {
     public static AST parsePostFix(String input) {
         if (input.trim().isEmpty()) {
@@ -6,9 +8,10 @@ public class Parser {
 
         ArrayStack<AST> stack = ArrayStack.emptyStack();
 
-        String[] piece = input.trim().split(" ");
+        String[] piece = input.split(" ");
+//        System.out.println(Arrays.toString(piece));
 
-        for (int i = 0; i < piece.length; i += 1) {
+        for(int i = 0; i < piece.length; i++){
             String token = piece[i];
 
             if (token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/") || token.equals("^")) {
@@ -23,7 +26,7 @@ public class Parser {
                 stack.push(node);
             } else {
                 boolean check = isNumber(token);
-                if (check == true) {
+                if (check) {
                     double num = Double.parseDouble(token);
                     stack.push(new NumNode(num));
                 } else {
@@ -31,17 +34,19 @@ public class Parser {
                 }
             }
         }
-            if (stack.size() > 1) {
-                throw new IllegalArgumentException("There are more operators than needed");
-            }
-            return stack.pop();
+        if (stack.size() > 1) {
+            throw new IllegalArgumentException("There are more operators than needed");
         }
+//        System.out.println(Arrays.toString(piece));
+        return stack.pop();
+    }
 
+    // Checks if a char of given String is a number or decimal point & returns boolean
     public static boolean isNumber(String token){
         boolean digit = false;
         boolean dec = false;
 
-        for(int i = 0; i < token.length(); i += 1){
+        for(int i = 0; i < token.length(); i++){
             char character = token.charAt(i);
 
             if(character >= '0' && character <= '9'){
