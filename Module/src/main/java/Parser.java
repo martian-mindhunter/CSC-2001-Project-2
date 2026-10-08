@@ -1,7 +1,9 @@
 //import java.util.Arrays;
 
 public class Parser {
-    public static AST parsePostFix(String input) {
+
+    // Takes a String input & returns an AST
+    public static AST parsePostfix(String input) {
         if (input.trim().isEmpty()) {
             throw new IllegalArgumentException("The input is empty");
         }
@@ -61,5 +63,10 @@ public class Parser {
 
         }
         return digit;
+    }
+
+    // Takes a String input & processes in left to right order w/ parantheses in mind
+    public static AST parseInfix(String input){
+        return null; // placeholder for commit
     }
 }
