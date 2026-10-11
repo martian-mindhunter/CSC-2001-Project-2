@@ -87,4 +87,5 @@ public class ArrayStackTest {
         s.pop();
         assertThrows(IndexOutOfBoundsException.class, () -> s.pop());
     }
+
 }

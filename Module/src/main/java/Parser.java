@@ -3,7 +3,7 @@
 public class Parser {
 
     // Takes a String input & returns an AST
-    public static AST parsePostfix(String input) {
+    public static AST parsePostFix(String input) {
         if(input.trim().isEmpty()) {
             throw new IllegalArgumentException("empty input");
         }
@@ -77,6 +77,15 @@ public class Parser {
         stack.push(new NumNode(num));
     }
 
+
+
+
+
+
+
+
+
+
     // Takes a String input & processes in left to right order w/ parantheses in mind
     public static AST parseInfix(String input){
         if (input.trim().isEmpty()) {
@@ -101,7 +110,7 @@ public class Parser {
                     pushOperator(opStack.pop().charAt(0), exprStack);
                 }
                 if(opStack.isEmpty()){
-                    throw new IllegalArgumentException("mismatched close paren");
+                    throw new IllegalArgumentException("mismatched close parenthesis");
                 }
                 opStack.pop();
 
@@ -119,7 +128,7 @@ public class Parser {
         while( !opStack.isEmpty() ){
             String op = opStack.pop();
             if(op.equals("(")) {
-                throw new IllegalArgumentException("mismatched open paren");
+                throw new IllegalArgumentException("mismatched open parenthesis");
             }
             pushOperator(op.charAt(0), exprStack);
         }
