@@ -11,22 +11,12 @@ public class Parser {
         ArrayStack<AST> stack = ArrayStack.emptyStack();
 
         String[] piece = input.split(" ");
-//        System.out.println(Arrays.toString(piece));
 
         for(int i = 0; i < piece.length; i++){
             String token = piece[i];
 
             if(isOperator(token)){
-//                if (stack.size() < 2) {
-//                    throw new IllegalArgumentException("insufficient operands");
-//                }
-//
-//                AST right = stack.pop();
-//                AST left = stack.pop();
-//
-//                BinopNode node = new BinopNode(token.charAt(0), left, right);
-//                stack.push(node);
-                pushOperator(token.charAt(0), stack);
+               pushOperator(token.charAt(0), stack);
             } else {
                 boolean check = isNumber(token);
                 if (check) {
@@ -83,57 +73,84 @@ public class Parser {
     }
 
     public static void pushNumber(String token, ArrayStack<AST> stack){
-        boolean check = isNumber(token);
-        if (check) {
-            double num = Double.parseDouble(token);
-            stack.push(new NumNode(num));
-        } else {
-            throw new IllegalArgumentException("The token is invalid");
-        }
+        double num = Double.parseDouble(token);
+        stack.push(new NumNode(num));
     }
 
     // Takes a String input & processes in left to right order w/ parantheses in mind
     public static AST parseInfix(String input){
         if (input.trim().isEmpty()) {
-            throw new IllegalArgumentException("The input is empty");
+            throw new IllegalArgumentException("empty input");
         }
 
-        ArrayStack<AST> numStack = ArrayStack.emptyStack();
-        ArrayStack<AST> opStack = ArrayStack.emptyStack();
-        ArrayStack<AST> stack = ArrayStack.emptyStack();
+        ArrayStack<AST> exprStack = ArrayStack.emptyStack();
+        ArrayStack<String> opStack = ArrayStack.emptyStack();
 
         String[] tokens = input.split(" ");
 
         for( String token : tokens ){
             if(isNumber(token)){
-                pushNumber(token, numStack);
+                pushNumber(token, exprStack);
             } else if(token.equals("(")){
-                pushOperator(token.charAt(0), opStack);
+
+                opStack.push(token);
+
             } else if(token.equals(")")){
 
-                if(!opStack.isEmpty()) {
-                    while(!(opStack.peek().equals("("))){
-                        if(isNumber(token)){
-                            pushNumber(token, numStack);
-                        } else if(isOperator(token)){
-                            pushOperator(token.charAt(0), opStack);
-                        }
-                        opStack.pop();
-                    }
-                } else {
+                while(!opStack.isEmpty() && !(opStack.peek().equals("("))){
+                    pushOperator(opStack.pop().charAt(0), exprStack);
+                }
+                if(opStack.isEmpty()){
                     throw new IllegalArgumentException("mismatched close paren");
                 }
                 opStack.pop();
 
             } else if(isOperator(token)){
-                pushOperator(token.charAt(0), opStack);
+                while(!opStack.isEmpty() && applyFirst(opStack.peek(), token)){
+                    pushOperator(opStack.pop().charAt(0), exprStack);
+                }
+                opStack.push(token);
             } else {
                 throw new IllegalArgumentException("invalid token");
             }
-            stack.push();
         }
 
-
+//        return exprStack.pop();
+        while( !opStack.isEmpty() ){
+            String op = opStack.pop();
+            if(op.equals("(")) {
+                throw new IllegalArgumentException("mismatched open paren");
+            }
+            pushOperator(op.charAt(0), exprStack);
+        }
+        if (exprStack.isEmpty()) {
+            throw new IllegalArgumentException("insufficient operands");
+        }
+        AST result = exprStack.pop();
+        if (!exprStack.isEmpty()) {
+            throw new IllegalArgumentException("too many operands");
+        } else {
+            return result;
+        }
 
     }
+
+    // Helper method to find which operator to apply
+    public static boolean applyFirst(String top, String currentToken){
+        return (precedence(top) > precedence(currentToken)) || (precedence(top) == precedence(currentToken) && !currentToken.equals("^"));
+    }
+
+    // Helper method to determine operator precedence
+    public static int precedence(String op){
+        if(op.equals("^")){
+            return 3;
+        } else if(op.equals("*") || op.equals("/")){
+            return 2;
+        } else if(op.equals("+") || op.equals("-")){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
 }

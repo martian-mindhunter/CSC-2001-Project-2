@@ -1,4 +1,4 @@
-public class ArrayStack<T> {
+public class ArrayStack<AST> {
 
     private static int initialCapacity = 10;
     private Object[] stack;
@@ -11,12 +11,12 @@ public class ArrayStack<T> {
     }
 
     // Creates an empty generic stack
-    public static <T> ArrayStack<T> emptyStack() {
+    public static <AST> ArrayStack<AST> emptyStack() {
         return new ArrayStack<>();
     }
 
     // Appends a value to the top of the stack & doubles length if necessary
-    public void push(T value) {
+    public void push(AST value) {
         if (this.size == this.stack.length) {
             this.doubleLength();
         }
@@ -26,19 +26,19 @@ public class ArrayStack<T> {
 
     // Removes the last value & returns as generic value
     @SuppressWarnings("unchecked")
-    public T pop() {
+    public AST pop() {
         this.checkNotEmpty();
         this.size--;
-        T result = (T) this.stack[this.size];
+        AST result = (AST) this.stack[this.size];
         this.stack[this.size] = null;
         return result;
     }
 
     // Returns generic value of the end of stack
     @SuppressWarnings("unchecked")
-    public T peek() {
+    public AST peek() {
         this.checkNotEmpty();
-        return (T) this.stack[this.size - 1];
+        return (AST) this.stack[this.size - 1];
     }
 
     // Checks if ArrayStack size is 0
